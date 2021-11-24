@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html
+  xmlns:pwp="http://www.cs.otago.ac.nz/staffpriv/ok/pwp.pl"
+  pwp:ask='ensure_loaded(queens), once(size(S)).'>
+<head>
+	<meta charset="utf-8" />
+	<title>Queens</title>
+	<meta name="generator" content="BBEdit 11.5" />
+</head>
+<body pwp:ask="queens(S, P).">
+	
+<h1>Queens problem</h1>
+
+<h2>
+	Solution for N = <span pwp:use="S." pwp:tag='-'/>
+</h2>
+	
+<table>
+      <tr pwp:ask="iter(P, K).">
+        <td pwp:ask="size(S), range(X, 1, S).">
+		<p pwp:ask="K == X."><img src="pic/queen.png"></p>
+		<p pwp:ask="K =\= X."><img src="pic/empty.png"></p>
+		</td>
+      </tr>
+
+</table>
+
+</body>
+</html>

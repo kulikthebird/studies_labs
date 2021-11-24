@@ -1,0 +1,49 @@
+[ program11.imp ]
+DECLARE
+	a aa b c d e f g
+IN
+	GET a;
+	GET aa;
+	GET b;
+	c := a + 10;
+	d := b - 5;
+	e := 1;
+	f := d + e;
+	g := 1111111111;
+
+	PUT g;
+	PUT a;
+	PUT aa;
+	PUT b;
+	PUT c;
+	PUT d;
+	PUT e;
+	PUT f;
+	PUT g;
+
+	IF a > b THEN	
+		e := a + c;
+		IF a > aa THEN	
+			f := e * aa;
+		ELSE
+			f := e * a;	
+		ENDIF
+	ELSE		
+		e := b + c;
+		IF aa > a THEN 
+			f := e / a;
+		ELSE			
+			f := e / aa;
+		ENDIF
+	ENDIF
+
+	PUT a;
+	PUT aa;
+	PUT b;
+	PUT c;
+	PUT d;
+	PUT e;
+	PUT f;
+
+END
+

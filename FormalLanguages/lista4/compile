@@ -1,0 +1,7 @@
+#!/bin/bash
+
+yacc -o parser.c -d parser.y
+lex tokens.l
+g++ lex.yy.c parser.c -o parser
+echo "Execution: "
+./parser < input

@@ -1,0 +1,9 @@
+*.config
+*.creator
+*.includes
+*.files
+*.user
+Bin/*.o
+.vscode
+.swp
+Bin/compress

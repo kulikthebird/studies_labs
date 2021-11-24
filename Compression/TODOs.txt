@@ -1,0 +1,3 @@
+Arithmetic coding needs bug fixing. Good practis is to create some simple testcases to automatize the whole process of testing.
+Lz77 has also a few bugs and require refactoring...
+Lzw needs refactoring 

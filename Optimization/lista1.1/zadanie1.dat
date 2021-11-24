@@ -1,0 +1,28 @@
+/* Tomasz Kulik */
+
+
+data;
+
+set Airports := airport1 airport2 airport3 airport4;
+set Company := company1 company2 company3;
+
+/*koszty paliwa*/
+param fuel_cost: 	  company1 company2 company3 :=
+		 airport1 10 	   7  	  8 
+		 airport2 10 	  11 	 14
+		 airport3 9  	  12 	  4
+		 airport4 11 	  13 	  9;
+
+/*ilość paliwa na sprzedaż*/
+param available_fuel := company1 275000
+		     company2 550000
+	 	     company3 660000;
+
+
+/*zapotrzebowanie lotnisk*/
+param needed_fuel := airport1 110000
+		     	 airport2 220000
+		         airport3 330000
+		         airport4 440000;
+	
+end;

@@ -1,0 +1,451 @@
+<html>
+<body>
+
+<div id="screenContainer">
+<textarea id="test" rows="10" cols="50">
+</textarea>
+<canvas id="logoScreen" width="500" height="500" style="border:1px solid #c3c3c3; align:center">
+Your browser does not support the canvas element.
+</canvas>
+</div>
+<div id="cmdLineContainer">
+<textarea id="cmdLine" rows="10" cols="50">
+forward 2.0+sqrt(12-4*2)/2.0
+</textarea>
+<textarea id="cmdLine22" rows="10" cols="50">
+to halfsierpinski :size :level
+ if :level = 0 [forward :size stop]
+ print halfsierpinski :size :level-1
+ left 45
+ forward :size*sqrt(2) 
+ left 45
+ print halfsierpinski :size :level-1
+ right 90
+ forward :size 
+ right 90
+ print halfsierpinski :size :level-1
+ left 45
+ forward :size*sqrt(2)
+ left 45
+ print halfsierpinski :size :level-1
+end
+
+to sierpinski :size :level
+ print halfsierpinski :size :level
+ right 90
+ forward :size
+ right 90
+ print halfsierpinski :size :level
+ right 90
+ forward :size
+ right 90
+end
+
+print sierpinski 0.005 6
+
+</textarea>
+</div>
+<div>
+<button id="sendCmd" onClick="parseLogoProgram(getProgramCode())">
+Start!
+</button>
+</div>
+
+<script>
+
+	var canvas = document.getElementById("logoScreen");
+	var ctx = canvas.getContext("2d");
+	var programCode = document.getElementById("cmdLine").value;
+	var parsedProgramCode = 0;
+	var methods = {};
+	
+	var actualX = 0.0;
+	var actualY = 0.0;
+	var actualAngle  = 0;
+	
+	var canvasHeight = canvas.height;
+	var canvasWidth  = canvas.width;
+	
+	var minX = -1.0;
+	var maxX = 1.0;
+	var minY = -1.0;
+	var maxY = 1.0;
+	var dX = maxX - minX;
+	var dY = maxY - minY;
+	
+	function getProgramCode()
+	{
+		return document.getElementById("cmdLine").value;
+	}
+	
+	function moveForward(distance)
+	{
+		var oldX = (maxX - actualX) * canvasWidth  / dX;
+		var oldY = (maxY - actualY) * canvasHeight / dY;
+		actualX  = actualX + Math.sin(actualAngle*2*Math.PI/360)*distance;
+		actualY  = actualY + Math.cos(actualAngle*2*Math.PI/360)*distance;
+		var newX = ((maxX - actualX) * canvasWidth)  / dX;
+		var newY = ((maxY - actualY) * canvasHeight) / dY;
+		ctx.moveTo(oldX | 0, oldY | 0);
+		ctx.lineTo(newX | 0, newY | 0);
+		ctx.stroke();
+	}
+	
+	function turnLeft(angle)
+	{
+		actualAngle = (actualAngle + angle) % 360;
+	}
+	
+	function turnRight(angle)
+	{
+		actualAngle = (actualAngle - angle) % 360;
+	}
+	
+	function parseLogoProgram(program)
+	{
+		parsedProgramCode = program.replace(/\[/g, " [ ").replace(/\]/g, " ] ").replace(/(\s)+/g, " ").split(" ");
+		executeCommands(0, parsedProgramCode.length, null);
+	}
+	
+	function getTokens(expression_arg)
+	{
+		var expression = expression_arg.split("");
+
+		// 0 - empty;
+		// 1 - variable;
+		// 2 - number;
+		// 3 - operator;
+		// 4 - keyword;
+		var state = 0;
+		var lastToken = "";
+		var tokens = [];
+		var tokenTypes = [];
+		for(var index=0; index < expression.length; index++)
+		{
+			if(expression[index] == '+' || expression[index] == '-' || expression[index] == '*' || expression[index] == '/' || expression[index] == '(' || expression[index] == ')')
+			{
+				if(lastToken != "")
+				{
+					tokens.push(lastToken);
+					tokenTypes.push(state);
+				}
+				
+				tokens.push(expression[index]);
+				tokenTypes.push(3);
+				
+				lastToken = "";
+				state = 0;
+			}
+			else if(expression[index] == ':')
+			{
+				if(state == 0)
+				{
+					state = 1;
+					lastToken += expression[index];
+				}
+				else
+				{
+					alert("Error while parsing expression");
+				}
+			}
+			else if((expression[index] >= '0' && expression[index] <= '9' || expression[index] == '.') && (state == 0 || state == 2))
+			{
+				state = 2;
+				lastToken += expression[index];
+			}
+			else
+			{
+				lastToken += expression[index];
+				if(lastToken == "sqrt")
+				{
+					state = 4;
+				}
+			}
+		}
+		if(lastToken != "")
+		{
+			tokens.push(lastToken);
+			tokenTypes.push(state);
+		}
+		return new Array(tokens, tokenTypes);
+	}
+
+	//var reversePolishNotation = [];   // TODO: maybe - minor upgrade
+	
+	function reduce(operator_stack, number_stack)
+	{
+		var operator = operator_stack.pop();
+		var first, second;
+		switch(operator)
+		{
+			case '+':
+				second = number_stack.pop();
+				first = number_stack.pop();
+				//reversePolishNotation.push(operator);
+				number_stack.push(first + second);
+			break;
+			case '-':
+				second = number_stack.pop();
+				first = number_stack.pop();
+				//reversePolishNotation.push(operator);
+				number_stack.push(first - second);
+			break;
+			case '*':
+				second = number_stack.pop();
+				first = number_stack.pop();
+				//reversePolishNotation.push(operator);
+				number_stack.push(first * second);
+			break;
+			case '/':
+				second = number_stack.pop();
+				first = number_stack.pop();
+				//reversePolishNotation.push(operator);
+				number_stack.push(first / second);
+			break;
+			case 'sqrt':
+				first = number_stack.pop();
+				number_stack.push(Math.sqrt(first));
+			break;
+			default:
+				operator_stack.push(operator);
+			break;
+		}
+	}
+	
+	function parseExpression(num, variable)
+	{
+		var tokensList = getTokens(num);
+		var token = tokensList[0];
+		var type   = tokensList[1];
+		var operator_stack  = ['$'];
+		var number_stack	= [];
+		token.push("$");
+		type.push(3);
+		
+		for(var i=0; i<token.length; i++)
+		{
+			document.getElementById("test").value += number_stack + "\n" + operator_stack + "\n";
+			switch(type[i])
+			{
+				case 0:
+				{
+					alert("There is an error - unknown token");
+					break;
+				}
+				case 1:
+				{
+					number_stack.push(parseFloat(variable[token[i]]));
+					//reversePolishNotation.push(parseFloat(variable[token[i]]));
+					break;
+				}
+				case 2:
+				{
+					number_stack.push(parseFloat(token[i]));
+					//reversePolishNotation.push(parseFloat(token[i]));
+					break;
+				}
+				case 3:
+				case 4:
+				{
+					while(true)
+					{
+						var lastOperator = operator_stack[operator_stack.length - 1];
+						if(token[i] == '+' || token[i] == '-')
+						{
+							if(lastOperator == '+' || lastOperator == '-' || lastOperator == '*' || lastOperator == '/' || lastOperator == 'sqrt')
+								reduce(operator_stack, number_stack);
+							else 
+								break;
+						}
+						if(token[i] == '*' || token[i] == '/')
+						{
+							if(lastOperator == '*' || lastOperator == '/' || lastOperator == 'sqrt')
+								reduce(operator_stack, number_stack);
+							else
+								break;
+						}
+						if(token[i] == ')')
+						{
+							if(lastOperator == '(')
+							{
+								operator_stack.pop();
+								break;
+							}
+							else
+								reduce(operator_stack, number_stack);
+						}
+						if(token[i] == '(')
+						{
+							break;
+						}
+						if(token[i] == 'sqrt')
+						{
+							break;
+						}
+						if(token[i] == '$')
+						{
+							if(lastOperator == "$")
+								break;
+							else
+								reduce(operator_stack, number_stack);
+						}
+					}
+					if(token[i] != ')')
+						operator_stack.push(token[i]);
+					break;
+				}
+			}
+		}
+		return number_stack[0];
+	}
+	
+	function getNumber(num, variables)
+	{
+		return parseExpression(num, variables);
+	}
+	
+	function executeCommands(startLine, variables)
+	{
+		var i;
+		for(i=startLine; i<parsedProgramCode.length; i++)
+		{
+			if(parsedProgramCode[i] == "forward")
+			{
+				moveForward(getNumber(parsedProgramCode[i+1], variables));
+				i++;
+			}
+			else if(parsedProgramCode[i] == "left")
+			{
+				turnLeft(getNumber(parsedProgramCode[i+1], variables));
+				i++;
+			}
+			else if(parsedProgramCode[i] == "right")
+			{
+				turnRight(getNumber(parsedProgramCode[i+1], variables));
+				i++;
+			}
+			else if(parsedProgramCode[i] == "repeat")
+			{
+				var n = parseInt(parsedProgramCode[i+1]);
+				var endOfBlock = 0;
+				for(j=0; j<n; j++)
+					endOfBlock = executeCommands(i+3, variables);
+				i = endOfBlock;
+				if(i == -1)
+					break;
+			}
+			else if(parsedProgramCode[i] == "stop")
+			{
+				return -1;	
+			}
+			else if(parsedProgramCode[i] == "if")
+			{
+				var left = getNumber(parsedProgramCode[i+1], variables);
+				var right = getNumber(parsedProgramCode[i+3], variables);
+				var operator = parsedProgramCode[i+2];
+				var result = false;
+				switch(operator)
+				{
+					case '=':
+					{
+						if(left == right)
+							result = true;
+						break;
+					}
+					case '>':
+					{
+						if(left > right)
+							result = true;
+						break;
+					}
+					case '<':
+					{
+						if(left < right)
+							result = true;
+						break;
+					}
+					case '>=':
+					{
+						if(left >= right)
+							result = true;
+						break;
+					}
+					case '<=':
+					{
+						if(left <= right)
+							result = true;
+						break;
+					}
+					case '!=':
+					{
+						if(left != right)
+							result = true;
+						break;
+					}
+				}
+				if(result)
+				{
+					i = executeCommands(i+5, variables);
+					if(i == -1)
+						break;
+				}
+				else
+				{
+					i += 4
+					var timesOfBrackets = 1;
+					while(timesOfBrackets > 0)
+					{
+						i++;
+						if(parsedProgramCode[i] == ']')
+							timesOfBrackets--;
+						else if(parsedProgramCode[i] == '[')
+							timesOfBrackets++;
+					}
+				}
+			}
+			else if(parsedProgramCode[i] == "to")
+			{
+				var nameOfMethod = parsedProgramCode[i+1];
+				var arguments = [];
+				i+=2;
+				while(parsedProgramCode[i].startsWith(":"))
+				{
+					arguments.push(parsedProgramCode[i]);
+					i++;
+				}
+				var beginIndex = i;
+				while(parsedProgramCode[i] != "end")
+					i++;
+				methods[nameOfMethod] = [beginIndex, arguments];
+			}
+			else if(parsedProgramCode[i] == "print")
+			{
+				var methodName = parsedProgramCode[i+1];
+				var methodVariables = {};
+				i += 2;
+				for(var j=0; j<methods[methodName].length; j++, i++)
+				{
+					methodVariables[methods[methodName][1][j]] = getNumber(parsedProgramCode[i], variables);
+				}
+				i--;
+				executeCommands(methods[methodName][0], methodVariables);
+			}
+			else if(parsedProgramCode[i] == "end" || parsedProgramCode[i] == "]")
+			{
+				break;
+			}
+			else
+			{
+				if(parsedProgramCode[i] != "")
+				{
+					alert("Something is wrong with your code!");
+					alert(parsedProgramCode[i]);
+				}
+			}
+		}
+		return i;
+	}
+	
+</script>
+</body>
+</html>

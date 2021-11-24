@@ -1,0 +1,16 @@
+[ errorf1.imp - niezainicjalizowana zmienna w zakresie petli ]
+DECLARE
+	a b c
+IN
+	a := 1;
+
+	FOR i DOWN FROM a TO b DO
+		c := a + i;
+		a := a * 7;
+	ENDFOR
+
+	PUT a;
+	PUT c;
+
+END
+

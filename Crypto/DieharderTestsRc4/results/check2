@@ -1,0 +1,15 @@
+#!/bin/bash
+
+plik=plik2
+
+./rc4 16 8 $plik 0 ; dieharder -a -g 201 -f $plik > 16_8_0.die ; rm $plik
+./rc4 16 8 $plik 1 ; dieharder -a -g 201 -f $plik > 16_8_1.die ; rm $plik
+./rc4 16 8 $plik 2 ; dieharder -a -g 201 -f $plik > 16_8_2.die ; rm $plik
+
+./rc4 64 8 $plik 0 ; dieharder -a -g 201 -f $plik > 64_8_0.die ; rm $plik
+./rc4 64 8 $plik 1 ; dieharder -a -g 201 -f $plik > 64_8_1.die ; rm $plik
+./rc4 64 8 $plik 2 ; dieharder -a -g 201 -f $plik > 64_8_2.die ; rm $plik
+
+./rc4 256 8 $plik 0 ; dieharder -a -g 201 -f $plik > 256_8_0.die ; rm $plik
+./rc4 256 8 $plik 1 ; dieharder -a -g 201 -f $plik > 256_8_1.die ; rm $plik
+./rc4 256 8 $plik 2 ; dieharder -a -g 201 -f $plik > 256_8_2.die ; rm $plik

@@ -1,0 +1,18 @@
+[ program5.imp ]
+DECLARE
+	a b
+IN
+	GET a;
+	a := 5 + a;
+	b := a - 2047;
+	a := a % 4;
+	IF a < b THEN
+	ELSE
+		PUT a;
+	ENDIF
+	IF b <= a THEN
+		PUT b;
+	ELSE
+	ENDIF
+END
+

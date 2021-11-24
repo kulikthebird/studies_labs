@@ -1,0 +1,24 @@
+[ program3.imp ]
+DECLARE
+	a b i
+IN
+	GET a;
+	i := 1;
+	WHILE i <= 1000 DO
+		b := 25663607 + 41445257;
+		a := b + a;
+  		i := i + 1;
+	ENDWHILE
+	PUT a;
+
+	GET a;
+	FOR ii DOWN FROM 1234567830 TO 1234567801 DO
+		a := a * 1024;
+	ENDFOR
+	PUT a;
+	PUT i;
+
+	a := 1999999999 * 1999999997;
+	PUT a;
+END
+

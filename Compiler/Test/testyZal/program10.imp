@@ -1,0 +1,45 @@
+[ program10.imp ]
+DECLARE
+	a b c t(7) d e f g h i j tab(6)
+IN
+	PUT 0;
+	PUT 1;
+	PUT 2;
+	PUT 10;
+	PUT 100;
+	PUT 10000;
+	PUT 1234567890;
+
+	a := 1234566543;
+	b := 677777177;
+	c := 15;
+	t(2) := 555555555;
+	d := 8888;
+	tab(4) := 11;
+	t(0) := 999;
+	e := 1111111111;
+	tab(0) := 7777;
+	f := 2048;
+	g := 123;
+	t(3) := t(0);
+	tab(5) := a;
+	tab(5) := tab(0) / tab(4);
+	t(5) := tab(0);
+
+	GET h;
+	i := 1;
+	j := h + c;
+	
+	PUT j; [ j = h + 15 ]
+	PUT c; [ c = 15 ]
+	PUT t(3); [ 999 ]
+	PUT t(2); [ 555555555 ]
+	PUT t(5); [ 7777 ]
+	PUT t(0); [ 999 ]
+	PUT tab(4); [ 11 ]
+	PUT tab(5); [ 707 ]
+	PUT tab(0); [ 7777 ]
+
+END
+
+

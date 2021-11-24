@@ -1,0 +1,25 @@
+loadi lit
+store wsk
+
+print:
+clear
+addi wsk
+skipcond 800
+jump end
+output
+ins 20
+load wsk
+add odin
+store wsk
+jump print
+end:
+
+halt
+
+wsk:  hex 0
+odin: hex 1
+lit: 
+hex 41
+hex 42
+hex 43
+hex 0

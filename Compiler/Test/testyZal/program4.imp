@@ -1,0 +1,23 @@
+[ program4.imp ]
+DECLARE
+	b c j t
+IN
+	j := 111111 - 111110;
+	GET b;
+	GET c;
+	IF b > 50 THEN
+		b := b % 50;
+	ENDIF
+	t := b + 1000;
+	t := t - 1;
+	PUT t;
+	FOR i FROM b TO t DO
+		t := i / j;
+		c := c + t;
+		t := i % i;
+		c := c + t;
+	ENDFOR
+	PUT t;
+	PUT c;
+END
+

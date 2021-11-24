@@ -1,0 +1,7 @@
+Generated/
+*.config
+*.creator
+*.user
+*.files
+*.includes
+Bin/*.o

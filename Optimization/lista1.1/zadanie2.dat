@@ -1,0 +1,29 @@
+/* Tomasz Kulik */
+
+
+data;
+/* 
+n - liczba miast;
+T - maksymalny czas przejazdu 
+*/
+param n := 5;
+param T := 10; 
+
+/* Graf
+A - łuki grafu skierowanego
+c - koszt przejazdu 
+t - czas przejazdu
+*/
+param : A :     c t :=
+       1 2	5 7
+       1 3	3 9
+       1 4	2 13
+       2 1      7 10
+       2 3	1 5
+       2 5	5 3
+       3 4 	3 7
+       3 5	1 2;
+
+param from := 2;
+param to := 5;       	
+end;
